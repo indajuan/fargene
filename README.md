@@ -1,6 +1,8 @@
 # fARGene
 
 > **Python 3 fork.** This branch (`python3-port`) completes a Python 3 port of fARGene, building on the original author's own unfinished `update_to_python3` branch. It also fixes two bugs found during the port, ships the full set of resistance-gene models (bioconda's current recipe is missing several — see below), and by default no longer requires NCBI's ORFfinder for short-read data (see [Prerequisites](#prerequisites)). Full verification details are in [PORTING_NOTES.md](PORTING_NOTES.md).
+>
+> ⚠️ **The `fargene` package on bioconda is outdated and not maintained by this project's developers.** It's a community-contributed recipe, hardcoded to skip Python 3 entirely, and it sources from an unrelated third-party fork rather than the original repository — as a result it's also missing several resistance-gene models (all aminoglycoside and macrolide models). Do not rely on `conda install -c bioconda fargene` for this or any Python 3 version. Install from source or with pixi instead (below).
 
 fARGene (Fragmented Antibiotic Resistance Gene iENntifiEr ) is a tool that takes either fragmented metagenomic data or longer sequences as input and predicts and delivers full-length antiobiotic resistance genes as output. The tool includes developed and optimized models for a number or resistance gene types,
 and the functionality to create and optimize models of your own choice of resistance genes.
@@ -68,7 +70,22 @@ For the model creation package you additionally need the following packages:
 
 ### Installing
 
-#### Installing from source
+#### Installing with pixi (recommended)
+
+[pixi](https://pixi.sh) resolves and installs every non-Python prerequisite listed above (EMBOSS, seqtk, HMMER, prodigal, SPAdes, Trim Galore!, ClustalO) plus fARGene itself, in one reproducible, locked environment — no separate `conda create` step needed.
+
+```
+git clone -b python3-port https://github.com/indajuan/fargene.git
+cd fargene
+pixi install
+pixi run fargene --help
+```
+
+`pixi.lock` in this repo pins exact package versions for Linux, Intel macOS, and Apple Silicon macOS, so `pixi install` reproduces the same environment on any of those platforms. Available tasks (`pixi run <task>`): `fargene`, `fargene-model-creation`, `pick-long-reads`.
+
+If you don't have pixi yet: `curl -fsSL https://pixi.sh/install.sh | bash` (see [pixi.sh](https://pixi.sh) for other install methods).
+
+#### Installing from source (conda/pip)
 ```
 git clone -b python3-port https://github.com/indajuan/fargene.git
 cd fargene
@@ -79,15 +96,7 @@ Use `pip install -e .` instead if you want an editable install for development.
 
 Note:
 
-`pip install .` will pull in numpy and matplotlib automatically. Either way, it's recommended to install into a [conda](https://conda.io/docs/user-guide/install/download.html) environment that already has the non-Python prerequisites above (see `environment.yml` in this repo for a working example).
-
-#### Installing from conda
-
-```
-conda install -c conda-forge -c bioconda fargene
-```
-
-**This currently installs the original Python 2.7 package, not this fork.** bioconda's `fargene` recipe is hardcoded to skip Python 3 builds entirely, and separately points at a stale, incomplete snapshot of the model set — see [PORTING_NOTES.md](PORTING_NOTES.md) for details. Fixing that recipe to point at this fork is planned but not done yet; install from source in the meantime.
+`pip install .` will pull in numpy and matplotlib automatically, but not the non-Python prerequisites (EMBOSS, seqtk, HMMER, etc.) — install those yourself, or use `environment.yml` in this repo with `conda env create -f environment.yml` to get a working environment, or use pixi above.
 
 ## Data analysis
 
