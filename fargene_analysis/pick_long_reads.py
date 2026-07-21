@@ -1,7 +1,7 @@
 import argparse
 import glob
 
-from utils import read_fasta
+from .utils import read_fasta
 
 def main():
     parser = argparse.ArgumentParser()
@@ -12,8 +12,8 @@ def main():
 
     args = parser.parse_args()
     files = glob.glob(args.input_files)
-    outputfile = open(args.output,'w')
-    pick_long_reads(files,args.length,outputfile,args)
+    with open(args.output,'w') as outputfile:
+        pick_long_reads(files,args.length,outputfile,args)
 
 def pick_long_reads(files,length,outputfile,args):
     totalcount = 0
@@ -42,7 +42,6 @@ def pick_long_reads(files,length,outputfile,args):
                         header = filename + "_" + header
                     outputfile.write('>%s\n%s\n' %(header,seq))
 
-    outputfile.close()
     print('searched %s sequences.\n \
             %s of them were longer than %s' \
             %(totalcount,passedcount,length))

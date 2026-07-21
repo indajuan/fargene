@@ -10,7 +10,8 @@ setup(name='fargene',
         license='MIT',
         packages=find_packages(),
         include_package_data=True,
-        install_requires=['matplotlib<=3.5','numpy<=1.21'],
+        python_requires='>=3.7',
+        install_requires=['matplotlib','numpy'],
         entry_points={
             'console_scripts': [
                 'fargene=fargene_analysis.fargene_analysis:main',
